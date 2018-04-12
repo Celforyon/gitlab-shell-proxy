@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#### Configuration
+
+# IP or hostname of the container running Gitlab
+user="__USER__"
+host="__HOST__"
+
+####
+
+gitlab_shell="__GITLAB_SHELL__"
+
+ssh_env=
+[ -z "${SSH_CLIENT}" ]            || ssh_env="${ssh_env}SSH_CLIENT=\"${SSH_CLIENT}\" "
+[ -z "${SSH_CONNECTION}" ]        || ssh_env="${ssh_env}SSH_CONNECTION=\"${SSH_CONNECTION}\" "
+[ -z "${SSH_ORIGINAL_COMMAND}" ]  || ssh_env="${ssh_env}SSH_ORIGINAL_COMMAND=\"${SSH_ORIGINAL_COMMAND}\" "
+ssh_cmd="${ssh_env} ${gitlab_shell} $*"
+
+ssh -o StrictHostKeyChecking=no "${user}@${host}" "${ssh_cmd}"

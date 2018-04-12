@@ -1,0 +1,23 @@
+FROM alpine
+
+LABEL maintainer="Alexis Pereda <alexis@pereda.fr>"
+LABEL version="1.0"
+LABEL description="Gitlab shell proxy"
+
+RUN apk add --no-cache bash inotify-tools
+
+COPY ./entrypoint /usr/local/bin/entrypoint
+COPY ./monitor /usr/local/bin/monitor
+COPY ./gitlab-shell-proxy /default/gitlab-shell-proxy
+
+ENV USER          "git"
+ENV USER_UID      "1000"
+ENV HOST          "git.example.org.docker"
+ENV GITLAB_SHELL  "/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell"
+
+ENV IAUTHFILE     "/data/authorized_keys.in"
+ENV OAUTHFILE     "/data/authorized_keys.out"
+
+ENV COMMAND       "~/bin/gitlab-shell-proxy"
+
+ENTRYPOINT ["/usr/local/bin/entrypoint", "/usr/local/bin/monitor"]

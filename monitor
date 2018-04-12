@@ -1,0 +1,95 @@
+#!/bin/bash
+
+user=${USER:-git}
+uid=${USER_UID:-1000}
+host=${HOST:-git.example.org.docker}
+gitlab_shell=${GITLAB_SHELL:-/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell}
+
+iauthfile=${IAUTHFILE:-/data/authorized_keys.in}
+oauthfile=${OAUTHFILE:-/data/authorized_keys.out}
+cmd=${COMMAND:-~/bin/gitlab-shell-proxy}
+
+####
+
+function log() {
+	echo "[monitor] $*"
+}
+function logn() {
+	echo -n "[monitor] $*"
+}
+function loge() {
+	echo "$*"
+}
+
+function error() {
+	echo>&2 "[monitor] [error] $*"
+	exit 1
+}
+
+function update_keys() {
+	logn 'authorized_keys file update requested... '
+
+	rm -f "${oauthfile}"
+	echo>"${oauthfile}" '# Automatically generated keys by gitlab-shell-proxy'
+	grep -E '^command' "${iauthfile}"|sed>>"${oauthfile}" -r 's@(command=").*( key-[0-9]+")@\1'"${cmd}"'\2@'
+	chmod 0600 "${oauthfile}"
+	chown "${uid}:" "${oauthfile}"
+
+	loge 'done'
+}
+
+function run_tests() {
+	[ "$(id -u)" -eq 0 ]      || error 'must be run as root'
+
+	[ -z "${user}" ]          && error 'missing value for USER'
+	[ -z "${uid}" ]           && error 'missing value for USER_UID'
+	[ -z "${host}" ]          && error 'missing value for HOST'
+	[ -z "${gitlab_shell}" ]  && error 'missing value for GITLAB_SHELL'
+	[ -z "${iauthfile}" ]     && error 'missing value for IAUTHFILE'
+	[ -z "${oauthfile}" ]     && error 'missing value for OAUTHFILE'
+	[ -z "${cmd}" ]           && error 'missing value for COMMAND'
+
+	[ -r "${iauthfile}" ]     || error "missing or not readable input authorized_keys file (IAUTHFILE = '${iauthfile}')"
+
+	[ "${iauthfile}" == "${oauthfile}" ] && error "OAUTHFILE must be different from IAUTHFILE (both = '${iauthfile}')"
+}
+
+function generate_proxy() {
+	in=/default/gitlab-shell-proxy
+	out=/proxy/gitlab-shell-proxy
+
+	rm -f "${out}"
+	sed>"${out}" "${in}" -r \
+		-e 's^__USER__^'"${user}"'^'  \
+		-e 's^__HOST__^'"${host}"'^'  \
+		-e 's^__GITLAB_SHELL__^'"${gitlab_shell}"'^'
+	chmod 0755 "${out}"
+	chown -R "${uid}:" /proxy
+
+	log "${out} generated"
+}
+
+function term() {
+	log 'terminated'
+	exit 0
+}
+
+####
+
+trap term SIGTERM
+trap term SIGINT
+
+mkdir -p /proxy
+
+run_tests
+
+generate_proxy
+
+update_keys
+while :; do
+	if inotifywait -qqe close_write "${iauthfile}"; then
+		update_keys
+	else
+		error 'an error occured with inotifywait'
+	fi
+done
