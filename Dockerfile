@@ -1,7 +1,7 @@
 FROM alpine
 
 LABEL maintainer="Alexis Pereda <alexis@pereda.fr>"
-LABEL version="1.0"
+LABEL version="1.1"
 LABEL description="Gitlab shell proxy"
 
 RUN apk add --no-cache bash inotify-tools

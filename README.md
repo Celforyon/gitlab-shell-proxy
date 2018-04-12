@@ -48,6 +48,8 @@ services:
 		- USER=git
 		- USER_UID=1000
 		- GITLAB_HOST=git.example.org.docker
+		depends_on:
+		- gitlab
 ```
 
 ### Environment variables

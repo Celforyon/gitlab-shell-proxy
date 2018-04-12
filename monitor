@@ -29,7 +29,6 @@ function error() {
 function update_keys() {
 	logn 'authorized_keys file update requested... '
 
-	rm -f "${oauthfile}"
 	echo>"${oauthfile}" '# Automatically generated keys by gitlab-shell-proxy'
 	grep -E '^command' "${iauthfile}"|sed>>"${oauthfile}" -r 's@(command=").*( key-[0-9]+")@\1'"${cmd}"'\2@'
 	chmod 0600 "${oauthfile}"
@@ -58,7 +57,6 @@ function generate_proxy() {
 	in=/default/gitlab-shell-proxy
 	out=/proxy/gitlab-shell-proxy
 
-	rm -f "${out}"
 	sed>"${out}" "${in}" -r \
 		-e 's^__USER__^'"${user}"'^'  \
 		-e 's^__GITLAB_HOST__^'"${gitlab_host}"'^'  \
@@ -76,8 +74,9 @@ function term() {
 
 ####
 
-trap term SIGTERM
 trap term SIGINT
+trap term SIGTERM
+trap term SIGQUIT
 
 mkdir -p /proxy
 
