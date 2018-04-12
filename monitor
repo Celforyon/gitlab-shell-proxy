@@ -5,8 +5,8 @@ uid=${USER_UID:-1000}
 gitlab_host=${GITLAB_HOST:-git.example.org.docker}
 gitlab_shell=${GITLAB_SHELL:-/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell}
 
-iauthfile=${IAUTHFILE:-/data/authorized_keys.in}
-oauthfile=${OAUTHFILE:-/data/authorized_keys.out}
+iauthfile=${IAUTHDIR:-/in}/authorized_keys
+oauthfile=${OAUTHDIR:-/out}/authorized_keys
 cmd=${COMMAND:-~/bin/gitlab-shell-proxy}
 
 ####
@@ -44,13 +44,11 @@ function run_tests() {
 	[ -z "${uid}" ]           && error 'missing value for USER_UID'
 	[ -z "${gitlab_host}" ]   && error 'missing value for GITLAB_HOST'
 	[ -z "${gitlab_shell}" ]  && error 'missing value for GITLAB_SHELL'
-	[ -z "${iauthfile}" ]     && error 'missing value for IAUTHFILE'
-	[ -z "${oauthfile}" ]     && error 'missing value for OAUTHFILE'
 	[ -z "${cmd}" ]           && error 'missing value for COMMAND'
 
-	[ -r "${iauthfile}" ]     || error "missing or not readable input authorized_keys file (IAUTHFILE = '${iauthfile}')"
+	[ -r "${iauthfile}" ]     || error "missing or not readable input authorized_keys file (${iauthfile})"
 
-	[ "${iauthfile}" == "${oauthfile}" ] && error "OAUTHFILE must be different from IAUTHFILE (both = '${iauthfile}')"
+	[ "${iauthfile}" == "${oauthfile}" ] && error "OAUTHDIR must be different from IAUTHDIR (file: '${iauthfile}')"
 }
 
 function generate_proxy() {

@@ -1,7 +1,7 @@
 FROM alpine
 
 LABEL maintainer="Alexis Pereda <alexis@pereda.fr>"
-LABEL version="1.1"
+LABEL version="1.2"
 LABEL description="Gitlab shell proxy"
 
 RUN apk add --no-cache bash inotify-tools
@@ -15,8 +15,8 @@ ENV USER_UID      "1000"
 ENV GITLAB_HOST   "git.example.org.docker"
 ENV GITLAB_SHELL  "/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell"
 
-ENV IAUTHFILE     "/data/authorized_keys.in"
-ENV OAUTHFILE     "/data/authorized_keys.out"
+ENV IAUTHDIR      "/in"
+ENV OAUTHDIR      "/out"
 
 ENV COMMAND       "~/bin/gitlab-shell-proxy"
 

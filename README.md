@@ -33,23 +33,23 @@ See Container section for docker-compose.yml examples and available configuratio
 
 ### example of docker-compose.yml
 
-```yaml
+```yml
 version: '2'
 services:
-	gitlab-shell-proxy:
-		container_name: gitlab-shell-proxy
-		image: celforyon/gitlab-shell-proxy
-		restart: always
-		volumes:
-		- /.../gitlab/.ssh/authorized_keys:/data/authorized_keys.in:ro
-		- /home/git/.ssh/authorized_keys:/data/authorized_keys.out
-		- /home/git/bin:/proxy
-		environment:
-		- USER=git
-		- USER_UID=1000
-		- GITLAB_HOST=git.example.org.docker
-		depends_on:
-		- gitlab
+  gitlab-shell-proxy:
+    container_name: gitlab-shell-proxy
+    image: celforyon/gitlab-shell-proxy
+    restart: always
+    volumes:
+    - /.../gitlab/.ssh:/in:ro
+    - /home/git/.ssh:/out
+    - /home/git/bin:/proxy
+    environment:
+    - USER=git
+    - USER_UID=1000
+    - GITLAB_HOST=git.example.org.docker
+    depends_on:
+    - gitlab
 ```
 
 ### Environment variables
@@ -60,6 +60,6 @@ services:
 | USER_UID | **host** user UID | 1000 |
 | GITLAB_HOST | IP or hostname of the Gitlab container | git.example.org.docker |
 | GITLAB_SHELL | the gitlab-shell binary in the Gitlab container | /opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell |
-| IAUTHFILE | the path of input authorized_keys | /data/authorized_keys.in |
-| OAUTHFILE | the path of output authorized_keys | /data/authorized_keys.out |
+| IAUTHDIR | the path of input authorized_keys parent directory | /in |
+| OAUTHDIR | the path of output authorized_keys parent directory | /out |
 | COMMAND | the **host** location of gitlab-shell-proxy | ~/bin/gitlab-shell-proxy |
