@@ -4,7 +4,7 @@
 
 # IP or hostname of the container running Gitlab
 user="__USER__"
-host="__HOST__"
+host="__GITLAB_HOST__"
 
 ####
 

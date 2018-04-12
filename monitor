@@ -2,7 +2,7 @@
 
 user=${USER:-git}
 uid=${USER_UID:-1000}
-host=${HOST:-git.example.org.docker}
+gitlab_host=${GITLAB_HOST:-git.example.org.docker}
 gitlab_shell=${GITLAB_SHELL:-/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell}
 
 iauthfile=${IAUTHFILE:-/data/authorized_keys.in}
@@ -43,7 +43,7 @@ function run_tests() {
 
 	[ -z "${user}" ]          && error 'missing value for USER'
 	[ -z "${uid}" ]           && error 'missing value for USER_UID'
-	[ -z "${host}" ]          && error 'missing value for HOST'
+	[ -z "${gitlab_host}" ]   && error 'missing value for GITLAB_HOST'
 	[ -z "${gitlab_shell}" ]  && error 'missing value for GITLAB_SHELL'
 	[ -z "${iauthfile}" ]     && error 'missing value for IAUTHFILE'
 	[ -z "${oauthfile}" ]     && error 'missing value for OAUTHFILE'
@@ -61,7 +61,7 @@ function generate_proxy() {
 	rm -f "${out}"
 	sed>"${out}" "${in}" -r \
 		-e 's^__USER__^'"${user}"'^'  \
-		-e 's^__HOST__^'"${host}"'^'  \
+		-e 's^__GITLAB_HOST__^'"${gitlab_host}"'^'  \
 		-e 's^__GITLAB_SHELL__^'"${gitlab_shell}"'^'
 	chmod 0755 "${out}"
 	chown -R "${uid}:" /proxy

@@ -12,7 +12,7 @@ COPY ./gitlab-shell-proxy /default/gitlab-shell-proxy
 
 ENV USER          "git"
 ENV USER_UID      "1000"
-ENV HOST          "git.example.org.docker"
+ENV GITLAB_HOST   "git.example.org.docker"
 ENV GITLAB_SHELL  "/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell"
 
 ENV IAUTHFILE     "/data/authorized_keys.in"

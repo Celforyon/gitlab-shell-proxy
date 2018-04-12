@@ -41,13 +41,13 @@ services:
 		image: celforyon/gitlab-shell-proxy
 		restart: always
 		volumes:
-		- /.../gitlab/.ssh/authorized_keys:/data/authorized_keys.in
+		- /.../gitlab/.ssh/authorized_keys:/data/authorized_keys.in:ro
 		- /home/git/.ssh/authorized_keys:/data/authorized_keys.out
 		- /home/git/bin:/proxy
 		environment:
 		- USER=git
 		- USER_UID=1000
-		- HOST=git.example.org.docker
+		- GITLAB_HOST=git.example.org.docker
 ```
 
 ### Environment variables
@@ -56,7 +56,7 @@ services:
 | --- | --- | --- |
 | USER | **host** user name | git |
 | USER_UID | **host** user UID | 1000 |
-| HOST | IP or hostname of the Gitlab container | git.example.org.docker |
+| GITLAB_HOST | IP or hostname of the Gitlab container | git.example.org.docker |
 | GITLAB_SHELL | the gitlab-shell binary in the Gitlab container | /opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell |
 | IAUTHFILE | the path of input authorized_keys | /data/authorized_keys.in |
 | OAUTHFILE | the path of output authorized_keys | /data/authorized_keys.out |
