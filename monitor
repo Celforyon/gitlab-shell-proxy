@@ -30,7 +30,7 @@ function update_keys() {
 	logn 'authorized_keys file update requested... '
 
 	echo>"${oauthfile}" '# Automatically generated keys by gitlab-shell-proxy'
-	grep -E '^command' "${iauthfile}"|sed>>"${oauthfile}" -r 's@(command=").*( key-[0-9]+")@\1'"${cmd}"'\2@'
+	grep -E '^command' "${iauthfile}"|sed>>"${oauthfile}" -r 's@(command=")[^ ]*([^"]+")@\1'"${cmd}"'\2@'
 	chmod 0600 "${oauthfile}"
 	chown "${uid}:" "${oauthfile}"
 

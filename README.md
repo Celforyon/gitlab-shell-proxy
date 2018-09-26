@@ -33,7 +33,7 @@ See Container section for docker-compose.yml examples and available configuratio
 
 ### example of docker-compose.yml
 
-```yml
+```yaml
 version: '2'
 services:
   gitlab-shell-proxy:
